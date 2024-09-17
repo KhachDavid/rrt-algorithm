@@ -1,0 +1,92 @@
+Questions:
+
+matplotlib...i have a list of edges like this with those instance functions
+
+print the edges as tiny lines 
+
+def run_mpl(xpoints, ypoints):
+    plt.plot(xpoints, ypoints, 'o', markersize=1)
+    plt.savefig('linear.pdf')
+here we just print xpoints and y points...assume you have access to a list of edges and print them as lines use LineCollections
+
+Here is my edge class:
+#
+#  Edge.py
+#  RRT Algorithm
+#
+#  Created by David Khachatryan on 9/17/24.
+#
+import numpy as np
+
+class Edge:
+    """
+    Attributes
+    ----------
+    x1: X coordinate of point one
+    y1: Y coordinate of point one
+    x2: X coordinate of point two
+    y2: Y coordinate of point two
+
+    Functions
+    ---------
+
+    """
+    def __init__(self, x1, y1, x2, y2):
+        self.x1 = x1
+        self.y1 = y1
+        self.x2 = x2
+        self.y2 = y2
+
+    def get_point_one(self):
+        return np.array([self.x1, self.y1])
+    
+    def get_point_two(self):
+        return np.array([self.x2, self.y2])
+
+edge is an instance of this...there is get_point_one and two
+
+ChatGPT Answer:
+
+Given your Edge class with methods get_point_one and get_point_two, we can modify the previous solution to use these methods to extract the edge's points for plotting. The LineCollection will still work, and you'll just need to adjust how the points are extracted from the Edge instances.
+
+Here’s an updated version of the run_mpl function that works with your Edge objects:
+
+python
+Copy code
+import matplotlib.pyplot as plt
+from matplotlib.collections import LineCollection
+
+def run_mpl(edges):
+    # Create a figure and an axis
+    fig, ax = plt.subplots()
+
+    # Convert Edge objects into a list of line segments
+    formatted_edges = [
+        (edge.get_point_one(), edge.get_point_two()) for edge in edges
+    ]
+    
+    # Extract all vertices from the edges (flattened list of points)
+    points = [point for edge in formatted_edges for point in edge]
+    
+    # Separate x and y coordinates of all points
+    xpoints, ypoints = zip(*points)
+    
+    # Plot the vertices as points
+    ax.plot(xpoints, ypoints, 'o', markersize=2)
+    
+    # Create a LineCollection from the edges
+    line_segments = LineCollection(formatted_edges, linewidths=1, colors='blue')
+    
+    # Add the line collection to the axis
+    ax.add_collection(line_segments)
+    
+    # Set limits for the plot
+    ax.autoscale()
+    
+    # Save and show the plot
+    plt.savefig('edges_with_points.pdf')
+    plt.show()
+
+# Example usage with Edge objects
+edges = [Edge(0, 0, 1, 1), Edge(1, 1, 2, 3), Edge(2, 3, 0, 0)]
+run_mpl(edges)

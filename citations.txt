@@ -1,2 +1,3 @@
 [1] https://stackoverflow.com/a/25421861 Accessed on 9/17/24
 [2] https://stackoverflow.com/a/74932533 Accessed on 9/17/24
+[3] ChatGpt. OpenAIUsed on 9/17/2024. Transcript is in ./chatgpt/transcript1.txt
