@@ -50,10 +50,13 @@ class Graph:
         return np.array([node.x for node in self.nodes]), np.array([node.y for node in self.nodes])
 
     def random_configuration(self):
+        ########## Begin_Citation [2] ##########
         # np.random.seed(42)
 
         N = 2 # x and y coordinates
         rand_vals = np.random.randint(0, 101, size=N)
+
+        ########## End_Citation [2] ##########
         return rand_vals
 
     def nearest_vertex(self, q_rand):
