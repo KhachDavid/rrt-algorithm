@@ -7,6 +7,7 @@
 import numpy as np
 from modules.Node import Node
 from modules.Edge import Edge
+from modules.Obstacle import Obstacle
 
 class Graph:
     """
@@ -14,6 +15,10 @@ class Graph:
     ----------
     nodes: Set of vertices represent as Node objects
     edges: Set of x, y pairs that represent Node connectinos as Edge objects
+    start_x: Int for the start of the exploration
+    start_y: Int for the start of the exploration
+    end_x: Int for the end of the exploration
+    end_y: Int for the end of the exploration
     start_dx: Int for the start of the domain
     start_dy: Int for the start of the domain
     end_dx: Int for the end of the domain
@@ -37,14 +42,19 @@ class Graph:
                         Adds an edge connecting new node and vertex
     ---------
     """
-    def __init__(self, start_x, start_y, start_dx, start_dy, end_dx, end_dy, delta=1):
+    def __init__(self, start_x, start_y, end_x, end_y, start_dx, start_dy, end_dx, end_dy, delta=1):
         self.nodes = [Node(start_x, start_y)]
+        self.start_x = start_x
+        self.start_y = start_y
+        self.end_x = end_x
+        self.end_y = end_y
         self.edges = []
         self.start_dx = start_dx
         self.start_dy = start_dy
         self.end_dx = end_dx
         self.end_dy = end_dy
         self.delta = delta
+        self.obstacles = self.generate_obstacles()
 
     def get_points(self):
         return np.array([node.x for node in self.nodes]), np.array([node.y for node in self.nodes])
@@ -52,9 +62,18 @@ class Graph:
     def random_configuration(self):
         ########## Begin_Citation [2] ##########
         # np.random.seed(42)
-
+        
         N = 2 # x and y coordinates
         rand_vals = np.random.randint(0, 101, size=N)
+        while True:
+            rand_vals = np.random.randint(0, 101, size=N)
+            count = 0
+            for o in self.obstacles:
+                if o.is_inside(rand_vals[0], rand_vals[1]):
+                    count += 1
+
+            if count == 0:
+                break
 
         ########## End_Citation [2] ##########
         return rand_vals
@@ -115,3 +134,24 @@ class Graph:
                 return e
         
         return -1
+    
+    def generate_obstacles(self):
+
+        obstacle_list = []
+        count = 100
+
+        for i in range(count):
+            N = 2 # x and y coordinates
+            coords  = np.random.randint(10, 90, size=N)
+            radius = np.random.randint(1, 5)
+
+            o = Obstacle(radius=radius, cX=coords[0], cY=coords[1])
+            obstacle_list.append(o)
+
+        return obstacle_list
+    
+    def check_line_collision(self, start, end):
+        for obstacle in self.obstacles:
+            if obstacle.intersects_line(start[0], start[1], end[0], end[1]):
+                return True
+        return False
